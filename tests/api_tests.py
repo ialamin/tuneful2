@@ -44,22 +44,22 @@ class TestAPI(unittest.TestCase):
         songA = models.Song()
         fileA = models.File(name="A test", song_id= 1)
         
-        songB = models.Song(file="Just a test")
+        songB = models.Song()
         fileB = models.File(name="A test", song_id= 2)
 
 
         session.add_all([songA, fileA, songB, fileB])
         session.commit()
+        
 
         response = self.client.get("/api/songs")
         
-        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, "application/json")
+        self.assertEqual(response.status_code, 200)
 
         data = json.loads(response.data.decode("ascii"))
+
         self.assertEqual(len(data), 2)
-
-
 
 
 
