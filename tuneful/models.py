@@ -17,7 +17,7 @@ class Song(Base):
         
         song = {
                     'id': self.id,
-                    'file': self.file
+                    'file': self.file.as_dictionary()
         }
         
         return song

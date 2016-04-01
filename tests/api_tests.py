@@ -60,6 +60,26 @@ class TestAPI(unittest.TestCase):
         data = json.loads(response.data.decode("ascii"))
 
         self.assertEqual(len(data), 2)
+        
+    def test_post_song(self):
+        """ Posting a new song """
+        data = {
+            "id": 1
+            
+        }
+
+        response = self.client.post("/api/songs",
+            data=json.dumps(data),
+            content_type="application/json",
+            headers=[("Accept", "application/json")]
+        )
+        
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.mimetype, "application/json")
+        self.assertEqual(urlparse(response.headers.get("Location")).path,
+                         "/api/songs/1")
+
+
 
 
 
