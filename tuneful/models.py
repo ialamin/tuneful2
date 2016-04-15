@@ -28,14 +28,19 @@ class File(Base):
     
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    song_id = Column(Integer, ForeignKey('song.id'), nullable=False)
+    song_id = Column(Integer, ForeignKey('song.id'))
     
     def as_dictionary(self):
         return {
             "id": self.id,
-            "name": self.filename,
-            "path": url_for("uploaded_file", filename=self.filename)
+            "name": self.name,
+            "path": url_for("uploaded_file", filename=self.name)
         }
+        
+
+
+
+Base.metadata.create_all(engine)
 
 
 

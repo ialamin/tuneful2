@@ -4,7 +4,7 @@ import shutil
 import json
 try: from urllib.parse import urlparse
 except ImportError: from urlparse import urlparse # Py2 compatibility
-from io import StringIO
+from io import StringIO, BytesIO
 
 import sys; print(list(sys.modules.keys()))
 # Configure our app to use the testing databse
@@ -15,7 +15,7 @@ from tuneful import models
 from tuneful.utils import upload_path
 from tuneful.database import Base, engine, session
 
-class TestAPI(unittest.T estCase):
+class TestAPI(unittest.TestCase):
     """ Tests for the tuneful API """
 
     def setUp(self):
@@ -63,8 +63,14 @@ class TestAPI(unittest.T estCase):
         
     def test_post_song(self):
         """ Posting a new song """
+        
+        fileA = models.File(name="A test")
+        
+        session.add(fileA)
+        session.commit()
+
         data = {
-            "id": 1
+            "id": fileA.id
             
         }
 

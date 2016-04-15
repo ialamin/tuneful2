@@ -14,7 +14,7 @@ from .utils import upload_path
 # JSON Schema describing the structure of a song
 post_schema = {
     "properties": {
-        "file" : {"type" : "integer"}
+        "file" : {"type" : "object"}
     },
     "required": ["file"]
 }
@@ -48,10 +48,12 @@ def songs_post():
     
     # Check that the JSON supplied is valid
     # If not you return a 422 Unprocessable Entity
+    print(data)
     try:
         validate(data, post_schema)
     except ValidationError as error:
         data = {"message": error.message}
+        print(data)
         return Response(json.dumps(data), 422, mimetype="application/json")
 
     
@@ -79,7 +81,9 @@ def file_post():
         return Response(json.dumps(data), 422, mimetype="application/json")
 
     filename = secure_filename(file.filename)
-    db_file = models.File(filename=filename)
+    db_file = models.File(name=filename)
+    db_song = models.Song(file=db_file)
+    session.add(db_song)
     session.add(db_file)
     session.commit()
     file.save(upload_path(filename))
