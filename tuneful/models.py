@@ -31,10 +31,11 @@ class File(Base):
     song_id = Column(Integer, ForeignKey('song.id'), nullable=False)
     
     def as_dictionary(self):
-        
-        file = { 'file': {'id': self.id, 'name': self.name}} 
-     
-        return file
+        return {
+            "id": self.id,
+            "name": self.filename,
+            "path": url_for("uploaded_file", filename=self.filename)
+        }
 
 
 

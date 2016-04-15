@@ -15,7 +15,7 @@ from tuneful import models
 from tuneful.utils import upload_path
 from tuneful.database import Base, engine, session
 
-class TestAPI(unittest.TestCase):
+class TestAPI(unittest.T estCase):
     """ Tests for the tuneful API """
 
     def setUp(self):
@@ -78,6 +78,41 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.mimetype, "application/json")
         self.assertEqual(urlparse(response.headers.get("Location")).path,
                          "/api/songs/1")
+                         
+    def test_get_uploaded_file(self):
+        path =  upload_path("test.txt")
+        with open(path, "wb") as f:
+            f.write(b"File contents")
+
+        response = self.client.get("/uploads/test.txt")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, "text/plain")
+        self.assertEqual(response.data, b"File contents")
+
+    def test_file_upload(self):
+        data = {
+            "file": (BytesIO(b"File contents"), "test.txt")
+        }
+
+        response = self.client.post("/api/files",
+            data=data,
+            content_type="multipart/form-data",
+            headers=[("Accept", "application/json")]
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.mimetype, "application/json")
+
+        data = json.loads(response.data.decode("ascii"))
+        self.assertEqual(urlparse(data["path"]).path, "/uploads/test.txt")
+
+        path = upload_path("test.txt")
+        self.assertTrue(os.path.isfile(path))
+        with open(path, "rb") as f:
+            contents = f.read()
+        self.assertEqual(contents, b"File contents")
+
 
 
 
